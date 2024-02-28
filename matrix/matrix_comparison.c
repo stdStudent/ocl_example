@@ -4,6 +4,7 @@
 #include <CL/cl.h>
 
 #include "../helper/opencl_check.h"
+#include "../helper/opencl_util.h"
 #include "../helper/read_file.h"
 #include "../helper/timestamp.h"
 
@@ -253,7 +254,11 @@ void matrixComparison(const cl_int size, cl_int localSize) {
         NULL,
         NULL
     );
-    CHECK(status);
+
+    if (status != CL_SUCCESS) {
+        printBuildLogs(devices, device_id, program);
+        exit(1);
+    }
 
     //-----------------------------------------------------
     // STEP 7: Create the kernel
