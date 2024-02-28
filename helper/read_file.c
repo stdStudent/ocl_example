@@ -5,7 +5,7 @@
 
 int read_file(unsigned char **output, size_t *size, const char *name) {
     FILE *file;
-    file = fopen(name, "r");
+    file = fopen(name, "rb");
     if (file == NULL) {
         printf("cannot open file: %s\n", name);
         return -1; // Return an error code if the file cannot be opened
