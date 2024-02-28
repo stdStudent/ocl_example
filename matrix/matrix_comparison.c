@@ -8,6 +8,7 @@
 #include "../helper/read_file.h"
 #include "../helper/timestamp.h"
 
+#include "matrix_util.h"
 #include "matrix_sequential.h"
 #include "matrix_comparison.h"
 
@@ -32,19 +33,6 @@ size_t getOptimalLocalSize(const size_t size, const size_t preffered_local_size,
     return 1;
 }
 
-void matrixGen(const cl_int size, cl_double *matrix1, cl_double *matrix2) {
-    if (matrix1 == NULL || matrix2 == NULL) {
-        puts("matrixGen(): you must initialize matrices first.");
-        exit(1);
-    }
-
-    for (int i = 0; i < size * size; i++)
-        matrix1[i] = ((double) rand()) / 65535.0;
-
-    for (int i = 0; i < size * size; i++)
-        matrix2[i] = ((double) rand()) / 5307.0;
-}
-
 void matrixComparison(const cl_int size, cl_int localSize) {
     if (size <= 0) {
         printf("incorrect argument (size: %d) must greater than zero\n", size);
@@ -61,7 +49,12 @@ void matrixComparison(const cl_int size, cl_int localSize) {
     cl_double *matrix2 = malloc(sizeof(cl_double) * size * size);
     cl_double *result_sq = malloc(sizeof(cl_double) * size * size);
     cl_double *result_pl = malloc(sizeof(cl_double) * size * size);
-    matrixGen(size, matrix1, matrix2);
+
+    //matrixGen(size, matrix1, matrix2);
+    matrixGenAndWriteToFile("../input/matrix1.txt", size, size);
+    matrixGenAndWriteToFile("../input/matrix2.txt", size, size);
+    readMatrixFromFile("../input/matrix1.txt", matrix1, size);
+    readMatrixFromFile("../input/matrix2.txt", matrix2, size);
 
     // Variables used to individually calculate the inititalization, copy and compilation times (that form the overhead) and the kernel runtime
     double time_opencl, time_opencl_init, time_opencl_comp, time_opencl_cpy;

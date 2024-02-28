@@ -16,7 +16,9 @@ add_executable(ocl_example main.c
         matrix/matrix_sequential.c
         matrix/matrix_sequential.h
         helper/opencl_util.c
-        helper/opencl_util.h)
+        helper/opencl_util.h
+        matrix/matrix_util.c
+        matrix/matrix_util.h)
 
 
 # The OpenCL SDK is downloaded from here:
