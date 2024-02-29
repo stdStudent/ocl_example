@@ -33,7 +33,7 @@ size_t getOptimalLocalSize(const size_t size, const size_t preffered_local_size,
     return 1;
 }
 
-void matrixComparison(const cl_int size, cl_int localSize) {
+void matrixComparison(const cl_int size, cl_int localSize, cl_int globalSize, cl_int singleThreaded) {
     if (size <= 0) {
         printf("incorrect argument (size: %d) must greater than zero\n", size);
         exit(-1);
@@ -300,6 +300,13 @@ void matrixComparison(const cl_int size, cl_int localSize) {
     );
     CHECK(status);
 
+    status |= clSetKernelArg(
+        mulKernel,
+        4,
+        sizeof(cl_int),
+        &singleThreaded
+    );
+
     //-----------------------------------------------------
     // OPTIONAL STEP: calculate optimal local size
     //-----------------------------------------------------
@@ -339,7 +346,7 @@ void matrixComparison(const cl_int size, cl_int localSize) {
     // but outgh to be used for optimal performace.
 
     size_t globalWorkSize[1];
-    globalWorkSize[0] = size * size;
+    globalWorkSize[0] = globalSize;
 
     size_t localWorkSize[1];
     localWorkSize[0] = localSize;
@@ -389,14 +396,16 @@ void matrixComparison(const cl_int size, cl_int localSize) {
     // Compilation time
     time4 = time_opencl_comp - time_opencl_cpy;
 
-    printf("Sequential execution: %f (sec)\n", time_sq / 1000000);
-    printf("Parallel execution (local work group size: %d): %f (sec)\n"
+    printf("(CPU) Sequential execution: %f (sec)\n", time_sq / 1000000);
+    printf("(GPU) Parallel execution (local WG size: %d, global WG size: %d, is single threaded: %d): %f (sec)\n"
            "Kernel runtime: %f (sec).\n"
            "Overhead %f (sec):"
            "\n\tInit time: %f (sec),"
            "\n\tCopy time: %f (sec),"
            "\n\tCompilation time: %f (sec)\n",
            localSize,
+           globalSize,
+           singleThreaded,
            (time1 + time2 + time3 + time4) / 1000000,
            time1 / 1000000,
            (time2 + time3 + time4) / 1000000,
