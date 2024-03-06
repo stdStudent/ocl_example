@@ -18,7 +18,9 @@ add_executable(ocl_example main.c
         helper/opencl_util.c
         helper/opencl_util.h
         matrix/matrix_util.c
-        matrix/matrix_util.h)
+        matrix/matrix_util.h
+        vector/vector_sum.c
+        vector/vector_sum.h)
 
 
 # The OpenCL SDK is downloaded from here:
